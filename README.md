@@ -64,20 +64,19 @@ $ docker node promote node3
 $ docker node promote ...
 ```
 
-Start the Spark and YARN cluster by creating a Docker stack 
+Start the Spark Standalone cluster by creating a Docker stack 
 ```shell
-$ docker stack deploy -c docker-compose.yml yarn
+$ docker stack deploy -c docker-compose.yml spark
 ```
 
 Check the status of each service started running the following
 ```shell
 $ docker service ls
-ID             NAME           MODE         REPLICAS   IMAGE                                 PORTS
-io5i950qp0ac   yarn_hdp1      replicated   0/1        mkenjis/ubhdpclu_img:latest           
-npmcnr3ihmb4   yarn_hdp2      replicated   0/1        mkenjis/ubhdpclu_img:latest           
-uywev8oekd5h   yarn_hdp3      replicated   0/1        mkenjis/ubhdpclu_img:latest           
-p2hkdqh39xd2   yarn_hdpmst    replicated   1/1        mkenjis/ubhdpclu_img:latest           
-xf8qop5183mj   yarn_spk_cli   replicated   0/1        mkenjis/ubspkcluster_img:latest
+ID             NAME             MODE         REPLICAS   IMAGE                             PORTS
+t3s7ud9u21hr   spark_spk_mst    replicated   1/1        mkenjis/ubspkcluster_img:latest   
+mi3w7xvf9vyt   spark_spk_wkr1   replicated   1/1        mkenjis/ubspkcluster_img:latest   
+xlg5ww9q0v6j   spark_spk_wkr2   replicated   1/1        mkenjis/ubspkcluster_img:latest   
+ni5xrb60u71i   spark_spk_wkr3   replicated   1/1        mkenjis/ubspkcluster_img:latest
 ```
 
 ## Running Spark shell in Spark Docker container
