@@ -21,6 +21,10 @@ services:
     image: mkenjis/ubspkcluster_img
     networks:
       - mynet
-
+  hadoop:
+    image: mkenjis/ubhdp_img
+    networks:
+      - mynet
+      
 networks:
   mynet:
