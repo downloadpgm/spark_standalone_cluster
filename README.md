@@ -41,7 +41,7 @@ $ docker swarm join-token manager  # issue a token to add a node as manager to s
 $ docker swarm join --token <token> <IP node1>:2377
 ```
 
-3. start a spark standalone cluster and spark client
+3. start a spark standalone cluster
 ```shell
 $ docker stack deploy -c docker-compose.yml spark
 $ docker service ls
@@ -52,8 +52,7 @@ xlg5ww9q0v6j   spark_spk_wkr2   replicated   1/1        mkenjis/ubspkcluster_img
 ni5xrb60u71i   spark_spk_wkr3   replicated   1/1        mkenjis/ubspkcluster_img:latest
 ```
 
-4. start spark-shell
-
+4. access spark master node
 ```shell
 $ docker container ls   # run it in each node and check which <container ID> is running the Spark master constainer
 CONTAINER ID   IMAGE                         COMMAND                  CREATED              STATUS              PORTS      NAMES
@@ -61,7 +60,10 @@ CONTAINER ID   IMAGE                         COMMAND                  CREATED   
 464730a41833   mkenjis/ubspkcluster_img:latest   "/usr/bin/supervisord"   14 minutes ago   Up 14 minutes   4040/tcp, 7077/tcp, 8080-8082/tcp, 10000/tcp   spark_spk_mst.1.n01a49esutmbgv5uum3tdsm6p
 
 $ docker container exec -it <spk_mst ID> bash
+```
 
+5. start spark-shell in spark cluster mode
+```shell
 $ spark-shell --master spark://<hostname>:7077
 2021-12-13 15:09:50 WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
 Setting default log level to "WARN".
