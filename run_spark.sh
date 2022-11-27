@@ -18,12 +18,12 @@ ssh-keyscan 0.0.0.0 >>~/.ssh/known_hosts
 
 if [ -n "${SPARK_HOST_SLAVES}" ]; then
 
-   sleep 30
+   sleep 20
    
    >${SPARK_HOME}/conf/slaves
    
    for SPARK_HOST in `echo ${SPARK_HOST_SLAVES} | tr ',' ' '`; do
-      ssh-keyscan ${SPARK_HOST} >~/.ssh/known_hosts
+      ssh-keyscan ${SPARK_HOST} >>~/.ssh/known_hosts
 	  ssh root@${SPARK_HOST} "cat /etc/hostname" >>${SPARK_HOME}/conf/slaves
    done
    
@@ -31,7 +31,3 @@ if [ -n "${SPARK_HOST_SLAVES}" ]; then
    $SPARK_HOME/sbin/start-master.sh
    $SPARK_HOME/sbin/start-slaves.sh
 fi
-
-while [ 1 -eq 1 ]; do
-   sleep 10
-done
