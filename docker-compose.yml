@@ -21,6 +21,8 @@ services:
     image: mkenjis/ubspkcluster_img
     networks:
       - mynet
-      
+
 networks:
   mynet:
+    external:
+       name: mynet

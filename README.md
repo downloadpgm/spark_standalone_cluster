@@ -8,7 +8,6 @@ This Docker image contains Spark binaries prebuilt and uploaded in Docker Hub.
 
 ## Build Spark image
 ```shell
-$ git clone https://github.com/mkenjis/apache_binaries
 $ wget https://archive.apache.org/dist/spark/spark-2.3.2/spark-2.3.2-bin-hadoop2.7.tgz
 $ docker image build -t mkenjis/ubspkcluster_img
 $ docker login   # provide user and password
@@ -33,26 +32,44 @@ Creates the following Hadoop files on $SPARK_HOME/conf directory :
 1. start swarm mode in node1
 ```shell
 $ docker swarm init --advertise-addr <IP node1>
-$ docker swarm join-token manager  # issue a token to add a node as manager to swarm
+$ docker swarm join-token worker  # issue a token to add a node as worker to swarm
 ```
 
-2. add more managers in swarm cluster (node2, node3, ...)
+2. add 3 more workers in swarm cluster (node2, node3, node4)
 ```shell
 $ docker swarm join --token <token> <IP node1>:2377
 ```
 
-3. start a spark standalone cluster
+3. label each node to anchor each container in swarm cluster
 ```shell
-$ docker stack deploy -c docker-compose.yml spark
-$ docker service ls
-ID             NAME             MODE         REPLICAS   IMAGE                             PORTS
-t3s7ud9u21hr   spark_spk_mst    replicated   1/1        mkenjis/ubspkcluster_img:latest   
-mi3w7xvf9vyt   spark_spk_wkr1   replicated   1/1        mkenjis/ubspkcluster_img:latest   
-xlg5ww9q0v6j   spark_spk_wkr2   replicated   1/1        mkenjis/ubspkcluster_img:latest   
-ni5xrb60u71i   spark_spk_wkr3   replicated   1/1        mkenjis/ubspkcluster_img:latest
+docker node update --label-add hostlabel=hdpmst node1
+docker node update --label-add hostlabel=hdp1 node2
+docker node update --label-add hostlabel=hdp2 node3
+docker node update --label-add hostlabel=hdp3 node4
 ```
 
-4. access spark master node
+4. create an external "overlay" network in swarm to link the 2 stacks (hdp and spk)
+```shell
+docker network create --driver overlay mynet
+```
+
+5. start the Hadoop cluster (with HDFS and YARN)
+```shell
+$ docker stack deploy -c docker-compose-hdp.yml hdp
+```
+
+6. start a spark standalone cluster
+```shell
+$ docker stack deploy -c docker-compose.yml spk
+$ docker service ls
+ID             NAME           MODE         REPLICAS   IMAGE                             PORTS
+t3s7ud9u21hr   spk_spk_mst    replicated   1/1        mkenjis/ubspkcluster_img:latest   
+mi3w7xvf9vyt   spk_spk_wkr1   replicated   1/1        mkenjis/ubspkcluster_img:latest   
+xlg5ww9q0v6j   spk_spk_wkr2   replicated   1/1        mkenjis/ubspkcluster_img:latest   
+ni5xrb60u71i   spk_spk_wkr3   replicated   1/1        mkenjis/ubspkcluster_img:latest
+```
+
+7. access spark master node
 ```shell
 $ docker container ls   # run it in each node and check which <container ID> is running the Spark master constainer
 CONTAINER ID   IMAGE                         COMMAND                  CREATED              STATUS              PORTS      NAMES
@@ -62,9 +79,9 @@ CONTAINER ID   IMAGE                         COMMAND                  CREATED   
 $ docker container exec -it <spk_mst ID> bash
 ```
 
-5. start spark-shell in spark cluster mode
+8. start spark-shell in spark cluster mode
 ```shell
-$ spark-shell --master spark://<hostname>:7077
+$ spark-shell --master spark://<spk_hostname>:7077
 2021-12-13 15:09:50 WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
 Setting default log level to "WARN".
 To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
