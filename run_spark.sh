@@ -24,7 +24,7 @@ if [ -n "${SPARK_HOST_SLAVES}" ]; then
 
       result=0
       for SPARK_HOST in `echo ${SPARK_HOST_SLAVES} | tr ',' ' '`; do
-         ssh -q root@${HADOOP_HOST} "echo 2>1" >/dev/null
+         ssh -q root@${SPARK_HOST} "echo 2>1" >/dev/null
          result=$(echo $?)
          # echo ${result}
          if [ ${result} -ne 0 ]; then
