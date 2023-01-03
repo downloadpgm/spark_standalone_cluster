@@ -1,4 +1,4 @@
-trap "{ echo Stopping play app; /root/stop_spark.sh; exit 0; }" SIGTERM
+trap "{ echo Stopping play app >/tmp/msg.txt; /usr/bin/bash -c \"/root/stop_spark.sh\"; exit 0; }" SIGTERM
 
 export JAVA_HOME=/usr/local/jre1.8.0_181
 export CLASSPATH=$JAVA_HOME/lib
@@ -53,4 +53,5 @@ if [ -n "${SPARK_HOST_SLAVES}" ]; then
    # start Spark master and slaves nodes
    $SPARK_HOME/sbin/start-master.sh
    $SPARK_HOME/sbin/start-slaves.sh
+
 fi
