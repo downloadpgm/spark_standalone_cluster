@@ -53,17 +53,7 @@ docker node update --label-add hostlabel=hdp3 node4
 docker network create --driver overlay mynet
 ```
 
-5. start the Hadoop cluster (with HDFS and YARN)
-```shell
-$ docker stack deploy -c docker-compose-hdp.yml hdp
-$ docker stack ps hdp
-jeti90luyqrb   hdp_hdp1.1     mkenjis/ubhdpclu_vol_img:latest   node2     Running         Preparing 39 seconds ago             
-tosjcz96hnj9   hdp_hdp2.1     mkenjis/ubhdpclu_vol_img:latest   node3     Running         Preparing 38 seconds ago             
-t2ooig7fbt9y   hdp_hdp3.1     mkenjis/ubhdpclu_vol_img:latest   node4     Running         Preparing 39 seconds ago             
-wym7psnwca4n   hdp_hdpmst.1   mkenjis/ubhdpclu_vol_img:latest   node1     Running         Preparing 39 seconds ago
-```
-
-6. start a spark standalone cluster
+5. start a spark standalone cluster
 ```shell
 $ docker stack deploy -c docker-compose.yml spk
 $ docker service ls
@@ -74,18 +64,10 @@ xlg5ww9q0v6j   spk_spk2   replicated   1/1        mkenjis/ubspkcluster_img:lates
 ni5xrb60u71i   spk_spk3   replicated   1/1        mkenjis/ubspkcluster_img:latest
 ```
 
-7. access spark master node
+6. in spark master node, start spark-shell in spark cluster mode
 ```shell
-$ docker container ls   # run it in each node and check which <container ID> is running the Spark master constainer
-CONTAINER ID   IMAGE                         COMMAND                  CREATED              STATUS              PORTS      NAMES
-71717fcd5a01   mkenjis/ubspkcluster_img:latest   "/usr/bin/supervisord"   14 minutes ago   Up 14 minutes   4040/tcp, 7077/tcp, 8080-8082/tcp, 10000/tcp   spark_spk2.1.bf8tsqv5lyfa4h5i8utwvtpch
-464730a41833   mkenjis/ubspkcluster_img:latest   "/usr/bin/supervisord"   14 minutes ago   Up 14 minutes   4040/tcp, 7077/tcp, 8080-8082/tcp, 10000/tcp   spark_spk_mst.1.n01a49esutmbgv5uum3tdsm6p
-
 $ docker container exec -it <spk_mst ID> bash
-```
-
-8. start spark-shell in spark cluster mode
-```shell
+$
 $ spark-shell --master spark://<spk_hostname>:7077
 2021-12-13 15:09:50 WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
 Setting default log level to "WARN".
