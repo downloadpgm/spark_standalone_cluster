@@ -11,8 +11,8 @@ create_conf_files.sh
 
 service ssh start
 
-echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
-ssh-keyscan ${HOSTNAME} >~/.ssh/known_hosts
+echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > /root/.ssh/config
+ssh-keyscan ${HOSTNAME} > /root/.ssh/known_hosts
 
 
 if [ -n "${SPARK_HOST_SLAVES}" ]; then
@@ -46,8 +46,8 @@ if [ -n "${SPARK_HOST_SLAVES}" ]; then
    >${SPARK_HOME}/conf/slaves
    
    for SPARK_HOST in `echo ${SPARK_HOST_SLAVES} | tr ',' ' '`; do
-      ssh-keyscan ${SPARK_HOST} >>~/.ssh/known_hosts
-	  ssh root@${SPARK_HOST} "cat /etc/hostname" >>${SPARK_HOME}/conf/slaves
+      ssh-keyscan ${SPARK_HOST} >>/root/.ssh/known_hosts
+      ssh root@${SPARK_HOST} "cat /etc/hostname" >>${SPARK_HOME}/conf/slaves
    done
    
    # start Spark master and slaves nodes

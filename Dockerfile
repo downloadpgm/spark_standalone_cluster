@@ -28,4 +28,4 @@ RUN chmod +x stop_spark.sh
 
 EXPOSE 10000 7077 4040 8080 8081 8082
 
-CMD /root/run_spark.sh; sleep infinity
+CMD /bin/bash -c "/root/run_spark.sh"; sleep infinity
